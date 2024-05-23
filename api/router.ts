@@ -1,88 +1,73 @@
 import express, { Router, Request, Response } from 'express';
-const Employee = require('../database/models/Employee');
+import Device from '../database/models/Devices'; // Importe o modelo Mongoose
+import DeviceLists from '../database/models/DeviceLists'; 
 
 const router: Router = express.Router();
 
-router.post('/employee', async (req: Request, res: Response) => {
-  const { name, position, departament, adimission } = req.body;
-  const adimissionDate = new Date(adimission);    
-  console.log('adimissionDATE--',adimissionDate)
-  const newEmployee = new Employee({
-    name,
-    position,
-    departament,
-    adimission:adimissionDate
+router.post('/device', async (req: Request, res: Response) => {
+  const { deviceData, configuration, device_list_id, user_id, device_name } = req.body;
+
+  const newDevice = new Device({ 
+    deviceData,
+    configuration,
+    device_list_id,
+    user_id,
+    device_name,
+    created: Date.now()
   });
 
   try {
-    const employee = await newEmployee.save();
-    res.send(employee);
-  } catch (err:any) {
-    console.error(err);
-    if (err.code === 11000) {
-      res.status(400).send('Duplicate key error: ' + err.keyValue);
-    } else {
-      res.status(500).send('An error occurred: ' + err.message);
-    }
+    const savedDevice = await newDevice.save();
+    res.json(savedDevice);
+  } catch (err) {
+    res.status(500).send(err);
   }
 });
 
-router.delete('/employee/:id', async (req: Request, res: Response) => {
+router.delete('/device/:id', async (req: Request, res: Response) => {
   try {
-    const employee = await Employee.findOne({ _id: req.params.id });
+    const response = await Device.findOne({ _id: req.params.id });
 
-    if (!employee) {
-      return res.status(404).json({ msg: 'Employee not found' });
+    if (!response) {
+      return res.status(404).json({ msg: 'device not found' });
     }
 
-    await Employee.deleteOne({ _id: req.params.id });
-    res.json({ msg: 'Employee removed' });
+    await response.deleteOne({ _id: req.params.id });
+    res.json({ msg: 'device removed' });
   } catch (err:any) {
     console.error(err.message);
 
     if (err.kind === 'ObjectId') {
-      return res.status(404).json({ msg: 'Employee not found' });
+      return res.status(404).json({ msg: 'device not found' });
     }
 
     res.status(500).send('Server error');
   }
 });
 
-router.get('/employees', async (req: Request, res: Response) => {
+router.get('/devices/:id', async (req: Request, res: Response) => {
   try {
-    const employees = await Employee.find();
-    res.json(employees);
-  } catch (err: any) {
-    res.status(500).send('Server error: ' + err.message);
-  }
-});
-
-router.get('/employees/:id', async (req: Request, res: Response) => {
-  try {
-    const employee = await Employee.findById(req.params.id);
-    if (employee) {
-      res.json(employee);
+    const response = await Device.find({ user_id: req.params.id });    
+    if (response) {
+      res.json(response);
     } else {
-      res.status(404).send('Employee not found');
+      res.status(404).send('Device not found');
     }
   } catch (err: any) {
     res.status(500).send('Server error: ' + err.message);
   }
 });
 
-router.put('/employee/:id', async (req: Request, res: Response) => {
+router.get('/devicesInfo', async (req: Request, res: Response) => {
   try {
-    const updatedEmployee = await Employee.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { new: true, runValidators: true }
-    );
+    const devices = await DeviceLists.find();
 
-    if (!updatedEmployee) {
-      return res.status(404).send('Employee not found');
+    console.log('response-->')   
+    if (devices) {
+      res.json(devices);
+    } else {
+      res.status(404).send('Device not found');
     }
-
-    res.send(updatedEmployee);
   } catch (err: any) {
     res.status(500).send('Server error: ' + err.message);
   }

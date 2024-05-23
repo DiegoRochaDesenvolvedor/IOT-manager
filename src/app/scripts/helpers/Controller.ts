@@ -25,29 +25,44 @@ export default class Controller {
           console.error(error);
         }
     };
-    static async createEmployee(name:string, position:string, departament:string, adimission:string){
-      const adimissionDateOnly = adimission.split(' ')[0] + ' ' + adimission.split(' ')[1] + ' ' + adimission.split(' ')[2] + ' ' + adimission.split(' ')[3];
-      const adimissionDate = new Date(adimissionDateOnly);    
-      console.log('adimissionDATE--',adimissionDate)
-        try {
-          const response = await axios.post('http://localhost:4000/api/employee', {
-            name,
-            position,
-            departament,
-            adimission:adimissionDate
-          });
-          console.log(response.data);
-          window.location.reload();
-        } catch (error) {
-          console.error(error);
-        }
-    };
-    static async getEmployeeById(id:string) {
+    static async DevicesInfo(){
       try {
-        const response = await axios.get(`http://localhost:4000/api/employees/${id}`);
+        const response = await axios.get(`http://localhost:4000/api/devicesInfo/`);
+        if (response.status !== 200) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log('response-->',response.data)
         return response.data;
       } catch (error) {
-        console.error(`Error occurred while fetching employee: ${error}`);
+        console.error(error);
+      }
+    };
+    static async getAllDevicesEmployee(id:string) {
+      try {
+        const response = await axios.get(`http://localhost:4000/api/devices/${id}`);
+        if (response.status !== 200) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log('response-->',response.data)
+        return response.data;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    static async createEmployee(device: string, configuration: string) {
+      try {
+        const response = await axios.post(`http://localhost:4000/api/device`, {
+          device,
+          configuration
+        });
+    
+        if (response.status !== 200) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    
+        return response.data;
+      } catch (error) {
+        console.error('Erro na requisição:', error);
       }
     }
   }

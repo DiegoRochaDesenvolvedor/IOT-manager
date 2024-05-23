@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  Textarea,
+  Select,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -10,32 +12,30 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input,
   FormErrorMessage,
 } from "@chakra-ui/react";
 import Controller from '../scripts/helpers/Controller';
 
 const CreateModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
-  const [name, setName] = useState("");
-  const [position, setPosition] = useState("");
-  const [departament, setDepartament] = useState("");
-  const [admission, setAdmission] = useState("");
-  const [errors, setErrors] = useState({ name: false, position: false, departament: false, admission: false });
+  const [devices, setDevices] = useState([]);
+  const [selectedDevice, setSelectedDevice] = useState(null);
+  const [configuration, setConfiguration] = useState('');
+
+  useEffect(() => {
+    const fetchDevices = async () => {
+      const devices = await Controller.DevicesInfo();
+      setDevices(devices);
+    };
+  
+    fetchDevices();
+  }, []);
 
   const handleSubmit = () => {
-    let newErrors = { name: false, position: false, departament: false, admission: false };
-
-    if (!name) newErrors.name = true;
-    if (!position) newErrors.position = true;
-    if (!departament) newErrors.departament = true;
-    if (!admission) newErrors.admission = true;
-
-    if (newErrors.name || newErrors.position || newErrors.departament || newErrors.admission) {
-      setErrors(newErrors);
+    if (!selectedDevice || !configuration) {
       return;
     }
 
-    Controller.createEmployee(name, position, departament, admission);
+    Controller.addDevice(selectedDevice, configuration);
     onClose();
   };
 
@@ -43,28 +43,24 @@ const CreateModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Criar novo funcionário</ModalHeader>
+        <ModalHeader>Adicionar dispositivo</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <FormControl isInvalid={errors.name}>
-            <FormLabel>Nome</FormLabel>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-            <FormErrorMessage>O campo nome é obrigatório</FormErrorMessage>
+          <FormControl>
+            <Select placeholder="Selecione o dispositivo" onChange={(e) => {
+              const device = devices.find(device => device._id === e.target.value);
+              setSelectedDevice(device || null);
+            }}>
+              {devices.map((device, index) => (
+                <option key={index} value={device._id}>
+                  {device.device}
+                </option>
+              ))}
+            </Select>
           </FormControl>
-          <FormControl mt={4} isInvalid={errors.position}>
-            <FormLabel>Posição</FormLabel>
-            <Input value={position} onChange={(e) => setPosition(e.target.value)} />
-            <FormErrorMessage>O campo posição é obrigatório</FormErrorMessage>
-          </FormControl>
-          <FormControl mt={4} isInvalid={errors.departament}>
-            <FormLabel>Departamento</FormLabel>
-            <Input value={departament} onChange={(e) => setDepartament(e.target.value)} />
-            <FormErrorMessage>O campo departamento é obrigatório</FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={errors.admission}>
-            <FormLabel>Admissão</FormLabel>
-            <Input type="date" onChange={(e) => setAdmission(e.target.value)} />
-            <FormErrorMessage>O campo admissão é obrigatório</FormErrorMessage>
+          <FormControl mt={4}>
+            <FormLabel>Configuração</FormLabel>
+            <Textarea value={configuration} onChange={(e) => setConfiguration(e.target.value)} style={{ height: "200px" }}/> 
           </FormControl>
         </ModalBody>
         <ModalFooter>

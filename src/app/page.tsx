@@ -3,13 +3,9 @@ import React, { useState } from 'react';
 import DynamicTable from './components/DynamicTable';
 import { ChakraProvider, Button, Box, Flex, Text } from "@chakra-ui/react";
 import CreateModal from './components/CreateModal';
-
-const getTableData = require('./scripts/helpers/getTableData').default;
-
+import Controller from './scripts/helpers/Controller';
 const Page: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const dataRequest = getTableData().then((data: any) => data);
-
   const handleOpen = () => setIsOpen(true);
   const handleClose = () => setIsOpen(false);
 
@@ -26,7 +22,7 @@ const Page: React.FC = () => {
             
           </Flex>
         </Box>
-        <DynamicTable color="red" data={dataRequest}/>
+        <DynamicTable color="red" id = "664f4310c8ada66e3574afa9" />
         <CreateModal isOpen={isOpen} onClose={handleClose} />
       </ChakraProvider>
     </div>

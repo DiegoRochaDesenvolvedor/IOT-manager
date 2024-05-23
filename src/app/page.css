@@ -3,3 +3,50 @@
     padding:0px;
     margin:0px;
 }
+
+.background{
+width: auto;
+height: 100vh;
+display:flex;
+flex-direction: column;
+align-items:center;
+}
+.background-input{
+background-color: azure;
+height: 300px;
+width: 400px;
+margin-top:10%;
+border-radius:5px;
+display:flex;
+flex-direction: column;
+align-items:center;
+}
+.input-init{
+    margin: 10px;
+    padding: 10px;
+    border-radius:5px;
+    border: solid 1px rgb(109, 121, 154);
+    font-size: 16px;
+    width: 200px;
+    background-color: azure;
+}
+h1{
+ margin-top:20px;
+ margin-bottom:20px;
+ font-family:Arial, Helvetica, sans-serif;
+ background-color: azure;   
+ color:rgb(109, 121, 154);
+}
+.login-button {
+    background-color: #4CAF50; /* Verde */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
