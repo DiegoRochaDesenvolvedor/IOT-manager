@@ -49,12 +49,16 @@ export default class Controller {
         console.error(error);
       }
     }
-    static async createEmployee(device: string, configuration: string) {
+    static async addDevice( user_id: string, configuration: string, device_list_id: string,device_name: string) {
+
       try {
         const response = await axios.post(`http://localhost:4000/api/device`, {
-          device,
-          configuration
+          user_id,
+          configuration,
+          device_list_id,
+          device_name
         });
+
     
         if (response.status !== 200) {
           throw new Error(`HTTP error! status: ${response.status}`);
