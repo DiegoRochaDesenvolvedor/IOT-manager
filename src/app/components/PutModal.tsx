@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FormLabel, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormErrorMessage } from "@chakra-ui/react";
+import { Select, Textarea, FormLabel, Button, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, FormControl, FormErrorMessage } from "@chakra-ui/react";
 import { Input } from "@chakra-ui/react";
 import Controller from '../scripts/helpers/Controller';
 
@@ -10,39 +10,52 @@ interface PutModalProps {
 }
 
 const PutModal: React.FC<PutModalProps> = ({ isOpen, onClose, id }) => {
-  const [name, setName] = useState('');
-  const [functionValue, setFunctionValue] = useState('');
-  const [departament, setdepartament] = useState('');
-  const [errors, setErrors] = useState({ name: false, functionValue: false, departament: false });
+  const [name, setDeviceName] = useState('');
+  const [configurationValue, setConfigurationValue] = useState('');
+  const [idDevice, setIdDevice] = useState('');
+  const [errors, setErrors] = useState({ name: false, configurationValue: false, idDevice: false });
+  const [devices, setDevices] = useState([]); 
+  const [selectedDevice, setSelectedDevice] = useState(null); 
+
 
   useEffect(() => {
     const fetchData = async () => {
       if (isOpen) {
-        const data = await Controller.getEmployeeById(id);
-        setName(data.name);
-        setFunctionValue(data.position);
-        setdepartament(data.departament);
+        console.log('id-',id)
+        const data = await Controller.getSpecifDeviceEmployee(id);
+        console.log('result-',data)
+        setDeviceName(data[0].device_name);
+        setConfigurationValue(data[0].configuration);
+        setIdDevice(data[0].device_list_id);
       }
     };
     fetchData();
   }, [isOpen, id]);
 
+  useEffect(() => {
+    const fetchDevices = async () => {
+      const devices = await Controller.DevicesInfo();
+      setDevices(devices); 
+    };
+    fetchDevices();
+  }, []);
+
   const handleUpdate = async () => {
-    let newErrors = { name: false, functionValue: false, departament: false };
+    let newErrors = { name: false, configurationValue: false, idDevice: false };
 
     if (!name) newErrors.name = true;
-    if (!functionValue) newErrors.functionValue = true;
-    if (!departament) newErrors.departament = true;
+    if (!configurationValue) newErrors.configurationValue = true;
+    if (!idDevice) newErrors.idDevice = true;
 
-    if (newErrors.name || newErrors.functionValue || newErrors.departament) {
+    if (newErrors.name || newErrors.configurationValue || newErrors.idDevice) {
       setErrors(newErrors);
       return;
     }
 
-    const updatedData = await Controller.putData(id, name, functionValue, departament);
-    setName(updatedData.name);
-    setFunctionValue(updatedData.position);
-    setdepartament(updatedData.departament);
+    const updatedData = await Controller.putData(name, configurationValue, idDevice);
+    setDeviceName(updatedData[0].device_name);
+    setConfigurationValue(updatedData[0].configuration);
+    setIdDevice(updatedData[0].device_list_id);
   };
 
   return(
@@ -54,18 +67,22 @@ const PutModal: React.FC<PutModalProps> = ({ isOpen, onClose, id }) => {
         <ModalBody>
           <FormControl isInvalid={errors.name}>
             <FormLabel>Nome</FormLabel>
-            <Input value={name} onChange={e => setName(e.target.value)} />
+            <Select placeholder="Selecione o dispositivo" onChange={(e) => {
+              const device = devices.find(device => device._id === e.target.value);
+              setSelectedDevice(device || null); // Agora isso deve funcionar
+            }}>
+              {devices.map((device, index) => (
+                <option key={index} value={device._id}>
+                  {device.device}
+                </option>
+              ))}
+            </Select>
             <FormErrorMessage>O campo nome é obrigatório</FormErrorMessage>
           </FormControl>
-          <FormControl mt={4} isInvalid={errors.functionValue}>
+          <FormControl mt={4} isInvalid={errors.configurationValue}>
             <FormLabel>Posição</FormLabel>
-            <Input value={functionValue} onChange={e => setFunctionValue(e.target.value)} />
+            <Textarea value={JSON.stringify(configurationValue, null, 2)} onChange={e => setConfigurationValue(e.target.value)} />
             <FormErrorMessage>O campo posição é obrigatório</FormErrorMessage>
-          </FormControl>
-          <FormControl mt={4} isInvalid={errors.departament}>
-            <FormLabel>Departamento</FormLabel>
-            <Input value={departament} onChange={e => setdepartament(e.target.value)} />
-            <FormErrorMessage>O campo departamento é obrigatório</FormErrorMessage>
           </FormControl>
         </ModalBody>
         <ModalFooter>

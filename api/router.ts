@@ -24,6 +24,8 @@ router.post('/device', async (req: Request, res: Response) => {
   }
 });
 
+
+
 router.delete('/device/:id', async (req: Request, res: Response) => {
   try {
     const response = await Device.findOne({ _id: req.params.id });
@@ -48,6 +50,19 @@ router.delete('/device/:id', async (req: Request, res: Response) => {
 router.get('/devices/:id', async (req: Request, res: Response) => {
   try {
     const response = await Device.find({ user_id: req.params.id });    
+    if (response) {
+      res.json(response);
+    } else {
+      res.status(404).send('Device not found');
+    }
+  } catch (err: any) {
+    res.status(500).send('Server error: ' + err.message);
+  }
+});
+
+router.get('/deviceId/:id', async (req: Request, res: Response) => {
+  try {
+    const response = await Device.find({ _id: req.params.id });    
     if (response) {
       res.json(response);
     } else {

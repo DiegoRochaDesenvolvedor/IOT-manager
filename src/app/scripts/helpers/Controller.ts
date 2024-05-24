@@ -40,7 +40,7 @@ export default class Controller {
     };
     static async getSpecifDeviceEmployee(id:string) {
       try {
-        const response = await axios.get(`http://localhost:4000/api/devices/${id}`);
+        const response = await axios.get(`http://localhost:4000/api/deviceId/${id}`);
         if (response.status !== 200) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
