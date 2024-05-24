@@ -1,14 +1,16 @@
 import axios from 'axios';
 import moment from 'moment';
 export default class Controller {
-    static async putData(configuration: string, device_list_id: string, device_name: string) {
-
-    try {
-      const response = await axios.put(`http://localhost:4000/api/devices/${id}`, {
+    static async putData(id:string, configuration: string, device_list_id: string, device_name: string) {
+      const parameters = {
         configuration,
         device_list_id,
         device_name,
-      });
+      }
+      console.log('id-->',id);
+      console.log('parameters-->',parameters);
+    try {
+      const response = await axios.put(`http://localhost:4000/api/device/${id}`, parameters);
       window.location.reload();
       return response.data;
 
@@ -71,7 +73,7 @@ export default class Controller {
 
       try {
         const response = await axios.post(`http://localhost:4000/api/device`, parameters);
-
+        window.location.reload();
     
         if (response.status !== 200) {
           throw new Error(`HTTP error! status: ${response.status}`);

@@ -24,7 +24,30 @@ router.post('/device', async (req: Request, res: Response) => {
   }
 });
 
+router.put('/device/:id', async (req: Request, res: Response) => {
+  const { configuration, device_list_id, device_name } = req.body;
+  const params = {
+    configuration,
+    device_list_id,
+    device_name,
+  }
+  console.log('req.params.id',req.params.id)
+  console.log('params',params)
+  try {
+    const updatedDevice = await Device.findByIdAndUpdate(
+      req.params.id,params,
+      { new: true }
+    );
 
+    if (!updatedDevice) {
+      res.status(404).send('Device not found');
+    } else {
+      res.json(updatedDevice);
+    }
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 
 router.delete('/device/:id', async (req: Request, res: Response) => {
   try {
