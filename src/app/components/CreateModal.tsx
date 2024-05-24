@@ -17,15 +17,13 @@ import {
 } from "@chakra-ui/react";
 import Controller from '../scripts/helpers/Controller';
 
-const CreateModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
-  const [name, setName] = useState("");
-  const [position, setPosition] = useState("");
-  const [departament, setDepartament] = useState("");
-  const [admission, setAdmission] = useState("");
-  const [errors, setErrors] = useState({ name: false, position: false, departament: false, admission: false });
+const CreateModal = ({ isOpen, onClose, user_id }: { isOpen: boolean, onClose: () => void, user_id: string }) => {
+  const [ setPosition] = useState("");
+  const [errors] = useState({ name: false, position: false, departament: false, admission: false });
   const [devices, setDevices] = useState([]);
   const [selectedDevice, setSelectedDevice] = useState(null);
-
+  const [device_name, setDeviceName] = useState<string | null>(null);
+  const [ configuration , setConfiguration] = useState("");
 
   useEffect(() => {
     const fetchDevices = async () => {
@@ -33,19 +31,22 @@ const CreateModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
      
       setDevices(devices);
     };
-  
     fetchDevices();
-  }, []);
+  }, [user_id]);
 
   const handleSubmit = () => {
-    Controller.createEmployee(device, configuration);
-    onClose();
+    try{
+      Controller.addDevice(user_id,selectedDevice.configuration, selectedDevice._id, selectedDevice.device);
+      onClose();
+    } catch {
+      console.error('Erro ao adicionar dispositivo:', error);
+    }
+
   };
 
   let config ;
   
   return (
-    
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
@@ -66,7 +67,7 @@ const CreateModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
         </FormControl>
           <FormControl mt={4} isInvalid={errors.position}>
             <FormLabel>Configuração</FormLabel>
-            <Textarea value={selectedDevice ? JSON.stringify(selectedDevice.configuration, null,2) : ''} onChange={(e) => setPosition(e.target.value)} style={{ height: "200px" }}/> 
+            <Textarea value={selectedDevice ? JSON.stringify(selectedDevice.configuration, null,2) : ''} onChange={(e) => setConfiguration(e.target.value)} style={{ height: "200px" }}/> 
           </FormControl>
         </ModalBody>
         <ModalFooter>
@@ -77,7 +78,6 @@ const CreateModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void
         </ModalFooter>
       </ModalContent>
     </Modal>
-    ///
   );
 };
 

@@ -22,7 +22,6 @@ interface RowData {
 }
 
 const DynamicTable: React.FC<DynamicTableProps> = ({ color, id }) => {
-  console.log('Rendering DynamicTable with id:', id);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [dataResolved, setDataResolved] = useState<RowData[]>([]);
@@ -53,8 +52,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({ color, id }) => {
     fetchData();
   }, [fetchData]);
     
-  console.log('filteredData-=',dataResolved)
-  const filteredData = dataResolved.filter((row: RowData) => {
+    const filteredData = dataResolved.filter((row: RowData) => {
     const name = row.device_name?.toString() ?? '';
     const position = row.position?.toString() ?? '';
     const departament = row.departament?.toString() ?? '';
@@ -120,7 +118,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({ color, id }) => {
               <PutModal 
                 isOpen={isPutModalOpen} 
                 onClose={onClosePutModal} 
-                id={putSelectedId} 
+                id={row._id.toString()} 
               />
               <DeleteModal 
                 isOpen={isDeleteModalOpen} 
@@ -133,16 +131,11 @@ const DynamicTable: React.FC<DynamicTableProps> = ({ color, id }) => {
         </Tbody>
       </Table>
       <CreateModal 
-                isOpen={isCreateModalOpen} 
-                onClose={onCloseCreateModal} 
-      />
+          isOpen={isCreateModalOpen}
+          onClose={onCloseCreateModal} user_id={id}      />
     </ChakraProvider>
     </div>
   );
 };
 
 export default DynamicTable;
-
-function result(prevState: null): null {
-  throw new Error('Function not implemented.');
-}

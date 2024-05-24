@@ -23,7 +23,6 @@ const Page: React.FC = () => {
           </Flex>
         </Box>
         <DynamicTable color="red" id = "664f4310c8ada66e3574afa9" />
-        <CreateModal isOpen={isOpen} onClose={handleClose} user_id="664f4310c8ada66e3574afa9"/>
       </ChakraProvider>
     </div>
   );
