@@ -14,7 +14,7 @@ Instale o banco de dados mongo db e o node nos sites oficiais
 
 Clone o repositório:
 ```
-git clone https://github.com/seu-usuario/clientes-mananger.git
+git clone https://github.com/seu-usuario/IOT-mananger.git
 ```
 Navegue até o diretório do projeto:
 ```
