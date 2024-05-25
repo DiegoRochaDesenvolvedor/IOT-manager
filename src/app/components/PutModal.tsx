@@ -10,7 +10,6 @@ interface PutModalProps {
 }
 
 const PutModal: React.FC<PutModalProps> = ({ isOpen, onClose, id }) => {
-  console.log('id-->', id);
   const [name, setDeviceName] = useState('');
   const [configurationValue, setConfigurationValue] = useState('');
   const [textAreaValue, setTextAreaValue] = useState('');
@@ -23,9 +22,7 @@ const PutModal: React.FC<PutModalProps> = ({ isOpen, onClose, id }) => {
   useEffect(() => {
     const fetchData = async () => {
       if (isOpen) {
-        console.log('id-',id)
         const data = await Controller.getSpecifDeviceEmployee(id);
-        console.log('result-',data)
         setDeviceName(data[0].device_name);
         setConfigurationValue(data[0].configuration);
         setTextAreaValue(JSON.stringify(data[0].configuration, null, 2));
@@ -83,23 +80,23 @@ const PutModal: React.FC<PutModalProps> = ({ isOpen, onClose, id }) => {
         <FormControl isInvalid={errors.name}>
   <FormLabel>Nome</FormLabel>
   <Select 
-    placeholder="Selecione o dispositivo" 
-    value={name}
-    onChange={(e) => {
-      const device = devices.find(device => device._id === e.target.value);
-      setSelectedDevice(device || null);
-      setDeviceChanged(true);
-      if (device) {
-        setDeviceName(device.device);
-      }
-    }}
-  >
-    {devices.map((device, index) => (
-      <option key={index} value={device._id}>
-        {device.device}
-      </option>
-    ))}
-  </Select>
+  placeholder="Selecione o dispositivo" 
+  value={name}
+  onChange={(e) => {
+    const device = devices.find(device => device._id === e.target.value);
+    setSelectedDevice(device || null);
+    setDeviceChanged(true);
+    if (device) {
+      setDeviceName(device.device);
+    }
+  }}
+>
+  {devices.map((device, index) => (
+    <option key={index} value={device._id}>
+      {device.device}
+    </option>
+  ))}
+</Select>
   <FormErrorMessage>O campo nome é obrigatório</FormErrorMessage>
 </FormControl>
 <FormControl mt={4} isInvalid={errors.configurationValue || deviceChanged}>
@@ -108,7 +105,6 @@ const PutModal: React.FC<PutModalProps> = ({ isOpen, onClose, id }) => {
     setTextAreaValue(e.target.value);
     setDeviceChanged(false); 
   }} />
-  <FormErrorMessage>{deviceChanged ? 'Por favor, atualize este campo' : 'O campo posição é obrigatório'}</FormErrorMessage>
 </FormControl>
         </ModalBody>
         <ModalFooter>
