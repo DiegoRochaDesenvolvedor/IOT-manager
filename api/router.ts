@@ -1,5 +1,6 @@
 import express, { Router, Request, Response } from 'express';
-import Device from '../database/models/Devices'; // Importe o modelo Mongoose
+import Device from '../database/models/Devices'; 
+import Users from '../database/models/Users';
 import DeviceLists from '../database/models/DeviceLists'; 
 
 const router: Router = express.Router();
@@ -31,8 +32,6 @@ router.put('/device/:id', async (req: Request, res: Response) => {
     device_list_id,
     device_name,
   }
-  console.log('req.params.id',req.params.id)
-  console.log('params',params)
   try {
     const updatedDevice = await Device.findByIdAndUpdate(
       req.params.id,params,
@@ -99,13 +98,20 @@ router.get('/deviceId/:id', async (req: Request, res: Response) => {
 router.get('/devicesInfo', async (req: Request, res: Response) => {
   try {
     const devices = await DeviceLists.find();
-
-    console.log('response-->')   
     if (devices) {
       res.json(devices);
     } else {
       res.status(404).send('Device not found');
     }
+  } catch (err: any) {
+    res.status(500).send('Server error: ' + err.message);
+  }
+});
+
+router.get('/session/:user/:password', async (req: Request, res: Response) => {
+  try {const { user, password } = req.params;
+    const session = await Users.findOne({ user, password });
+    res.json(session);
   } catch (err: any) {
     res.status(500).send('Server error: ' + err.message);
   }

@@ -7,8 +7,6 @@ export default class Controller {
         device_list_id,
         device_name,
       }
-      console.log('id-->',id);
-      console.log('parameters-->',parameters);
     try {
       const response = await axios.put(`http://localhost:4000/api/device/${id}`, parameters);
       window.location.reload();
@@ -83,5 +81,13 @@ export default class Controller {
       } catch (error) {
         console.error('Erro na requisição:', error);
       }
+    }
+    static async validateSession(user:string , password:string) {
+        const response = await axios.get(`http://localhost:4000/api/session/${user}/${password}`);
+        if(response.data){
+          return true
+        }else{
+          return false
+        }
     }
   }

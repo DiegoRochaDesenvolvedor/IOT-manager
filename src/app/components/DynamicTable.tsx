@@ -33,6 +33,8 @@ const DynamicTable: React.FC<DynamicTableProps> = ({ color, id }) => {
   const [sortDirection, setSortDirection] = useState('asc');
   const [putSelectedId, setPutSelectedId] = useState('');
   const [data, setData] = useState(null);
+  const { isOpen: isDashboardModalOpen, onOpen: onOpenDashboardModal, onClose: onCloseDashboardModal } = useDisclosure();
+
   
   const putClickHandler = (id: string) => () => {
     setPutSelectedId(id);
@@ -74,7 +76,7 @@ const DynamicTable: React.FC<DynamicTableProps> = ({ color, id }) => {
 
   return (
     
-      <div style={{ width: '80vw', margin: 'auto', background:"rgb(255, 255, 255)"}}>
+      <div style={{ width: '80vw', margin: 'auto'}}>
       <ChakraProvider>
       <Input 
         placeholder="Pesquisar" 
@@ -108,13 +110,14 @@ const DynamicTable: React.FC<DynamicTableProps> = ({ color, id }) => {
         <Tbody>
           {sortedData && Array.isArray(sortedData) && sortedData.map((row: RowData, index: number) => (
             <Tr key={index}>
-              <Td textAlign="center">{String(row.device_name)}</Td>
-              <Td textAlign="center" color="green" style={{ whiteSpace: 'pre-wrap' }}>
-                {JSON.stringify(row.configuration, null, 2)}
-              </Td>            
-              <Td textAlign="center">
+            <Td textAlign="center">{String(row.device_name)}</Td>
+            <Td textAlign="center" color="green" style={{ whiteSpace: 'pre-wrap' }}>
+              {JSON.stringify(row.configuration, null, 2)}
+            </Td>            
+            <Td textAlign="center">
               <Button colorScheme="purple" size="sm" onClick={putClickHandler(row._id.toString())}>Atualizar</Button>
               <Button colorScheme="gray" size="sm" marginLeft="10px" onClick={() => { setSelectedId(row._id.toString()); onOpenDeleteModal(); }}>Deletar</Button>
+              <Button colorScheme="blue" size="sm" marginLeft="10px" onClick={onOpenDashboardModal}>Dashboard</Button>
               <PutModal 
                 isOpen={isPutModalOpen} 
                 onClose={onClosePutModal} 
@@ -125,8 +128,19 @@ const DynamicTable: React.FC<DynamicTableProps> = ({ color, id }) => {
                 onClose={onCloseDeleteModal} 
                 id={String(selectedId)} 
               />
-              </Td>
-            </Tr>
+              <Modal isOpen={isDashboardModalOpen} onClose={onCloseDashboardModal}>
+              <ModalOverlay bg="rgba(0, 0, 0, 0.5)" />
+                <ModalContent>
+                  <ModalHeader>Dashboard</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    Dashboard
+                    Aqui constariam os dados vindos da api externa
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+            </Td>
+          </Tr>
           ))}
         </Tbody>
       </Table>

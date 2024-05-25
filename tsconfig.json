@@ -30,7 +30,7 @@
   "include": [
     "api/**/*.ts",
     ".next/types/**/*.ts"
-  ],
+, "external_api/index.ts", "external_api/router.ts"  ],
   "exclude": [
     "node_modules"
   ]
